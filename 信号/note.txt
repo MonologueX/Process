@@ -1,0 +1,133 @@
+信号
+    Linux系统响应某些状况而产生的的事件，进程接收到信号会采取相应的动作
+产生信号的条件
+    键盘事件
+    非法内存
+    非法指令
+
+查看系统信号
+    kill -l
+信号缺省执行动作
+    man 7 signal
+
+信号处理的方式
+    忽略信号 
+        SIGKILL SIGSTOP 不能忽略
+    捕获并处理 
+        SIGKILL SIGSTOP 不能被捕获
+    缺省处理
+
+注册信号
+    void (*signal(int signum, void (*pf)(int)))(int);
+    typedef void (*sighandler_t)(int)
+    sighandler_t (int signum, sighandler_t handler);
+    sighandler_t 
+        1. 自定义
+        2. SIG_IGN
+        3. SIG_DFL
+        struct stu{
+            int id; 
+            char name;
+            int age;
+        }
+    #define ofset (&(((struct stu*)0)->age)
+    #define SIG_IGN ((sighandler_t)0)
+    #define SIG_DFL ((sighandler_t)1)
+    #define SIG_ERR ((sighandler_t)-1)
+
+信号的分类
+    不可靠信号 1~31
+        Linux 信号处理继承UNIX，早期UNIX当信号处理函数执行完毕，该信号恢复成缺省处理动作，Linux 已经改进
+        信号不排队，会出现信号丢失现象
+    可靠信号 34~64
+        不会出现丢失
+    非实时信号
+        不可靠信号
+    实时信号
+        可靠信号
+
+发送信号
+    kill -信号值 pid
+    killall -信号值 name 不给是15 
+
+    int kill(pid_t pid, int signal);
+    pid > 0 : 明确的给 pid 这个进程发送信号
+    pid = 0 ：给本进程组所有进程发送信号
+    pid == -1 : 给有权发送的所有进程发送信号
+    pid < -1 : 给绝对值 pid 进程组的任何一个进程发送信号
+
+    int raise(int signum); 给自己发信号
+    int killpg(int pgid, int signum); 给 pgid 进程组发送信号
+
+    进程组: 管道连接的多个进程属于同一进程组，(第一个进程的 pid 是进程组的 pid) fork 出来，父子进程属于同一进程组(父进程是进程组的 pid)
+    sleep 100 & 后台进程
+    Ctrl C 只能发给前台作业
+    jobs 查看有哪些后台作业
+    fg 把后台作业调到前台
+    fg %num，缺省是 1
+
+pause() 将当前进程状态置为可中断的睡眠状态，然后调用 schedule()，使Linux 进程调度算法找到另一个进程来执行
+pause() 是调用者进程一直挂起，直到有信号被捕获
+pause 等到信号处理完毕再返回
+
+常见的信号处理
+SIGALARM
+    unsigned int alarm(unsigned int seconds);
+    参数为 0，清除信号
+
+设置定时器
+    int setitimer(int which, ITIMER_REAL 桌面
+                 const struct itimerval* new_value, 
+                 struct itimerval *old_value);
+           struct itimerval {
+               struct timeval it_interval; /* next value */ 以后启动
+               struct timeval it_value;    /* current value */ 第一次启动
+           };
+
+           struct timeval {
+               time_t      tv_sec;         /* seconds */
+               suseconds_t tv_usec;        /* microseconds */
+           };
+SIGCHILD
+
+可重入函数和不可重入函数
+条件;
+    1. 函数内部调用了malloc free
+    2. 调用了标准I/O
+    3. 使用了静态变量
+查询可重入: man 7 signal 
+
+信号的内核表示
+信号抵达(delivery):执行信号的处理动作
+信号未决(pending):信号产生到信号抵达之间的状态
+信号阻塞(block):
+int sigprocmask(int how, // SIG_BLACK   : mask = mask | set
+                     // SIG_UNBLACK : mask = mask & ~set
+                     // SIG_SETMASK : mask = set
+            const sigset_t* set, // 要设置的
+            sigset_t* oldset);   // 返回旧的信号屏蔽集合
+sigset_t set: 信号集 
+int sigemptyset(sigset_t* set);
+    memset(set, 0, sizeof(sigset_t)):
+int sigeaddset(sigset_t* set, int signum);
+    *set |= 1 << (signum-1)
+int sigdelset(sigset_t* set, int num)
+    *set &= ~(1<<(num-1))
+int sigismember(sigset_t* set, int num);
+    return *set & 1<<(num-1)
+
+// 获得内核信号的未决信号集
+int sigpending(sigset_t* set)
+int pause(void) // 将当前进程挂起，转存储调度，直到有信号抵达，才唤醒该进程
+int sigsuspend(const sigset_t *mask);
+    pause + 信号屏蔽 将原本的信号屏蔽遮掉
+竞态
+int sigcation(int signo,
+              const struct sigzction* set, // 设置信号处理 
+              struct sigaction *old);      // 返回信号处理
+struct sigaction
+{
+    void (*sa_handler)(int);
+    sigset_t sa_mask; // 信号处理函数执行期间的信号屏蔽
+    int sa_flags; // 0
+}
