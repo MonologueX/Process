@@ -1,0 +1,40 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+__CONDITION_H__	condition.h	2;"	d
+__THREADPOOL_H__	threadPool.h	2;"	d
+arg	threadPool.h	/^    void *arg;$/;"	m	struct:task
+cond	threadPool.h	/^    condition_t cond;$/;"	m	struct:threadpool
+condition	condition.h	/^typedef struct condition $/;"	s
+condition_boardcast	condition.c	/^int condition_boardcast(condition_t *cond)$/;"	f
+condition_destroy	condition.c	/^int condition_destroy(condition_t *cond)$/;"	f
+condition_init	condition.c	/^int condition_init(condition_t *cond)$/;"	f
+condition_lock	condition.c	/^int condition_lock(condition_t *cond)$/;"	f
+condition_signal	condition.c	/^int condition_signal(condition_t *cond)$/;"	f
+condition_t	condition.h	/^}condition_t;$/;"	t	typeref:struct:condition
+condition_timewait	condition.c	/^int condition_timewait(condition_t *cond, struct timespec *abstime)$/;"	f
+condition_unlock	condition.c	/^int condition_unlock(condition_t *cond)$/;"	f
+condition_wait	condition.c	/^int condition_wait(condition_t *cond)$/;"	f
+counter	threadPool.h	/^    int counter;$/;"	m	struct:threadpool
+first	threadPool.h	/^    task_t *first;$/;"	m	struct:threadpool
+idle	threadPool.h	/^    int idle;$/;"	m	struct:threadpool
+main	main.c	/^int main()$/;"	f
+max_thread	threadPool.h	/^    int max_thread;$/;"	m	struct:threadpool
+myroute	main.c	/^static void *myroute(void *arg)$/;"	f	file:
+next	threadPool.h	/^    struct task *next;$/;"	m	struct:task	typeref:struct:task::task
+pcond	condition.h	/^    pthread_cond_t pcond;$/;"	m	struct:condition
+pfunc	threadPool.h	/^    void *(*pfunc)(void*);$/;"	m	struct:task
+pmutex	condition.h	/^    pthread_mutex_t pmutex;$/;"	m	struct:condition
+quit	threadPool.h	/^    int quit;$/;"	m	struct:threadpool
+route	threadPool.c	/^static void*route(void *arg)$/;"	f	file:
+tail	threadPool.h	/^    task_t *tail;$/;"	m	struct:threadpool
+task	threadPool.h	/^typedef struct task$/;"	s
+task_t	threadPool.h	/^}task_t;$/;"	t	typeref:struct:task
+threadpool	threadPool.h	/^typedef struct threadpool$/;"	s
+threadpool_add	threadPool.c	/^void threadpool_add(threadpool_t *pool, void*(*pf)(void*), void *arg)$/;"	f
+threadpool_destroy	threadPool.c	/^void threadpool_destroy(threadpool_t *pool)$/;"	f
+threadpool_init	threadPool.c	/^void threadpool_init(threadpool_t *pool, int max)$/;"	f
+threadpool_t	threadPool.h	/^}threadpool_t;$/;"	t	typeref:struct:threadpool
